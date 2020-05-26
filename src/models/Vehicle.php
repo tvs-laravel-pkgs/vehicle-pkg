@@ -5,17 +5,32 @@ namespace Abs\VehiclePkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
+use App\VehicleOwner;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class VehicleModel extends Model {
+class Vehicle extends Model {
 	use SeederTrait;
 	use SoftDeletes;
-	protected $table = 'vehicle_models';
+	protected $table = 'vehicles';
 	public $timestamps = true;
-	protected $fillable = [
 
+	//issue : readability
+	protected $fillable = [
+		"company_id",
+		"engine_number",
+		"chassis_number",
+		"model_id",
+		"is_registered",
+		"registration_number",
+		"vin_number",
+		"sold_date",
+		"warranty_member_id",
+		"ewp_expiry_date",
 	];
+	// protected $fillable =
+	// 	["company_id", "engine_number", "chassis_number", "model_id", "is_registered", "registration_number", "vin_number", "sold_date", "warranty_member_id", "ewp_expiry_date"]
+	// ;
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -24,7 +39,32 @@ class VehicleModel extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+	public function vehicleOwner() {
+		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
+	}
 
+	//issue : naming
+	public function currentOwner() {
+		//issue : wrong relationship
+		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC');
+	}
+
+	// public function vehicleCurrentOwner() {
+	// 	return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC')->limit(1);
+	// }
+
+	//issue : naming & model name
+	// public function vehicleModel() {
+	// 	return $this->belongsTo('App\vehicleModel', 'model_id');
+	// }
+
+	public function model() {
+		return $this->belongsTo('App\VehicleModel', 'model_id');
+	}
+
+	public function status() {
+		return $this->belongsTo('App\Config', 'status_id');
+	}
 	public static function createFromObject($record_data) {
 
 		$errors = [];
@@ -60,16 +100,11 @@ class VehicleModel extends Model {
 		return $record;
 	}
 
-	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Vehicle Model') {
+	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle') {
 		$list = Collect(Self::select([
 			'id',
-			'model_number as name',
+			'name',
 		])
-				->where(function ($q) use ($params) {
-					if (isset($params['vehicle_make_id'])) {
-						$q->where('vehicle_make_id', $params['vehicle_make_id']);
-					}
-				})
 				->orderBy('name')
 				->get());
 		if ($add_default) {
