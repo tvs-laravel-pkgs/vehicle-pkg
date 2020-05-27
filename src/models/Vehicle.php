@@ -5,7 +5,6 @@ namespace Abs\VehiclePkg;
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
-use App\VehicleOwner;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -39,7 +38,9 @@ class Vehicle extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
-	public function vehicleOwner() {
+	//issue : naming
+	// public function vehicleOwner() {
+	public function vehicleOwners() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
 
@@ -60,6 +61,14 @@ class Vehicle extends Model {
 
 	public function model() {
 		return $this->belongsTo('App\VehicleModel', 'model_id');
+	}
+
+	public function jobOrders() {
+		return $this->hasMany('App\JobOrder');
+	}
+
+	public function lastJobOrder() {
+		return $this->hasOne('App\JobOrder')->orderBy('created_at', 'DESC');
 	}
 
 	public function status() {
