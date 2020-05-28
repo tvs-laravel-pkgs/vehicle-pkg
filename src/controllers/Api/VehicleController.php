@@ -26,7 +26,10 @@ class VehicleController extends Controller {
 				if ($registration_no_count < 8) {
 					return response()->json([
 						'success' => false,
-						'error' => 'The registration number must be at least 8 characters.',
+						'error' => 'Validation Error',
+						'errors' => [
+							'The registration number must be at least 8 characters.',
+						],
 					]);
 				} else {
 					$first_two_string = substr($request->registration_number, 0, 2);
@@ -38,7 +41,10 @@ class VehicleController extends Controller {
 					if ($error) {
 						return response()->json([
 							'success' => false,
-							'error' => $error,
+							'error' => 'Validation Error',
+							'errors' => [
+								$error,
+							],
 						]);
 					}
 				}
@@ -98,7 +104,10 @@ class VehicleController extends Controller {
 			if ($request->is_registered != 1) {
 				return response()->json([
 					'success' => false,
-					'error' => 'Unregistred Vehile Not allow!!',
+					'error' => 'Validation Error',
+					'errors' => [
+						'Unregistred Vehile Not allow!!',
+					],
 				]);
 			}
 
@@ -113,7 +122,7 @@ class VehicleController extends Controller {
 				$vehicle->updated_by_id = Auth::id();
 			}
 			$vehicle->fill($request->all());
-			$vehicle->status_id = 8141; //CUSTOMER NOT MAPED
+			$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 			$vehicle->save();
 
 			DB::commit();
