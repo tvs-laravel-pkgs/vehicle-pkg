@@ -57,8 +57,6 @@ class VehicleController extends Controller {
 				],
 				'registration_number' => [
 					'required_if:is_registered,==,1',
-					// 'min:8',
-					// 'string',
 					'max:10',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
