@@ -82,7 +82,7 @@ class VehicleController extends Controller {
 				'vin_number' => [
 					'required',
 					'min:17',
-					'max:32',
+					'max:17',
 					'string',
 					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
