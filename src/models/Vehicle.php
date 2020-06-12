@@ -38,26 +38,13 @@ class Vehicle extends Model {
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
-	//issue : naming
-	// public function vehicleOwner() {
 	public function vehicleOwners() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
 
-	//issue : naming
 	public function currentOwner() {
-		//issue : wrong relationship
 		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC');
 	}
-
-	// public function vehicleCurrentOwner() {
-	// 	return $this->hasMany('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC')->limit(1);
-	// }
-
-	//issue : naming & model name
-	// public function vehicleModel() {
-	// 	return $this->belongsTo('App\vehicleModel', 'model_id');
-	// }
 
 	public function model() {
 		return $this->belongsTo('App\VehicleModel', 'model_id');
