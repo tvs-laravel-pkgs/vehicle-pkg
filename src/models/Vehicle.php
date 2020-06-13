@@ -55,7 +55,7 @@ class Vehicle extends Model {
 	}
 
 	public function lastJobOrder() {
-		return $this->hasOne('App\JobOrder')->orderBy('created_at', 'DESC');
+		return $this->hasOne('App\JobOrder')->orderBy('created_at', 'DESC')->skip(1)->take(1);
 	}
 
 	public function status() {

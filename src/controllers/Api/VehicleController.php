@@ -3,6 +3,7 @@
 namespace Abs\VehiclePkg\Api;
 
 use App\Http\Controllers\Controller;
+use App\JobOrder;
 use App\User;
 use App\Vehicle;
 use Auth;
@@ -15,6 +16,7 @@ class VehicleController extends Controller {
 
 	//VEHICLE SAVE
 	public function saveVehicle(Request $request) {
+		// dd($request->all());
 		try {
 			//REMOVE WHITE SPACE BETWEEN REGISTRATION NUMBER
 			$request->registration_number = str_replace(' ', '', $request->registration_number);
@@ -51,6 +53,11 @@ class VehicleController extends Controller {
 			}
 
 			$validator = Validator::make($request->all(), [
+				'job_order_id' => [
+					'required',
+					'integer',
+					'exists:job_orders,id',
+				],
 				'is_registered' => [
 					'required',
 					'integer',
@@ -120,8 +127,16 @@ class VehicleController extends Controller {
 				$vehicle->updated_by_id = Auth::id();
 			}
 			$vehicle->fill($request->all());
-			$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+			if ($vehicle->currentOwner) {
+				$vehicle->status_id = 8142; //COMPLETED
+			} else {
+				$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+			}
 			$vehicle->save();
+
+			// INWARD PROCESS CHECK - VEHICLE DETAIL
+			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
 
 			DB::commit();
 
