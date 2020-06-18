@@ -67,6 +67,13 @@ class VehicleController extends Controller {
 					'max:10',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
+				'is_sold' => [
+					'required',
+					'integer',
+				],
+				'sold_date' => [
+					'required_if:is_sold,==,1',
+				],
 				'model_id' => [
 					'required',
 					'exists:models,id',

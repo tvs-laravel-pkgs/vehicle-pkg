@@ -14,7 +14,6 @@ class Vehicle extends Model {
 	protected $table = 'vehicles';
 	public $timestamps = true;
 
-	//issue : readability
 	protected $fillable = [
 		"company_id",
 		"engine_number",
@@ -23,13 +22,11 @@ class Vehicle extends Model {
 		"is_registered",
 		"registration_number",
 		"vin_number",
+		"is_sold",
 		"sold_date",
 		"warranty_member_id",
 		"ewp_expiry_date",
 	];
-	// protected $fillable =
-	// 	["company_id", "engine_number", "chassis_number", "model_id", "is_registered", "registration_number", "vin_number", "sold_date", "warranty_member_id", "ewp_expiry_date"]
-	// ;
 
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
@@ -37,6 +34,14 @@ class Vehicle extends Model {
 
 	public function setDateOfJoinAttribute($date) {
 		return $this->attributes['date_of_join'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
+	}
+
+	public function getSoldDateAttribute($value) {
+		return empty($value) ? '' : date('d-m-Y', strtotime($value));
+	}
+
+	public function setSoldDateAttribute($date) {
+		return $this->attributes['sold_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 	public function vehicleOwners() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
