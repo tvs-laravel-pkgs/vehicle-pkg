@@ -33,7 +33,7 @@
     var vehicle_make_card_list_template_url = '{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-make/card-list.html')}}';
     var vehicle_make_modal_form_template_url = '{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/partials/vehicle-make-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-make/controller.js')}}'></script>
+<!-- <script type='text/javascript' src='{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-make/controller.js')}}'></script> -->
 
 
 <script type='text/javascript'>
@@ -64,5 +64,5 @@
     var vehicle_model_card_list_template_url = '{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-model/card-list.html')}}';
     var vehicle_model_modal_form_template_url = '{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/partials/vehicle-model-modal-form.html')}}';
 </script>
-<script type='text/javascript' src='{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-model/controller.js')}}'></script>
+<!-- <script type='text/javascript' src='{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-model/controller.js')}}'></script> -->
 

@@ -3,12 +3,13 @@
 namespace Abs\VehiclePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
+use App\BaseModel;
 use App\Company;
 use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Vehicle extends Model {
+class Vehicle extends BaseModel {
 	use SeederTrait;
 	use SoftDeletes;
 	protected $table = 'vehicles';
@@ -43,6 +44,9 @@ class Vehicle extends Model {
 	public function setSoldDateAttribute($date) {
 		return $this->attributes['sold_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
+
+	// Relationships --------------------------------------------------------------
+
 	public function vehicleOwners() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
 	}
@@ -66,6 +70,20 @@ class Vehicle extends Model {
 	public function status() {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
+
+	// Query Scopes --------------------------------------------------------------
+
+	public function scopeFilterSearch($query, $term) {
+		if (strlen($term)) {
+			$query->where(function ($query) use ($term) {
+				$query->orWhere('code', 'LIKE', '%' . $term . '%');
+				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+			});
+		}
+	}
+
+	// Static Operations --------------------------------------------------------------
+
 	public static function createFromObject($record_data) {
 
 		$errors = [];
