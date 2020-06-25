@@ -2,6 +2,7 @@
 
 namespace Abs\VehiclePkg\Api;
 
+use Abs\BasicPkg\Traits\CrudTrait;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
 use App\User;
@@ -12,6 +13,8 @@ use Illuminate\Http\Request;
 use Validator;
 
 class VehicleController extends Controller {
+	use CrudTrait;
+	public $model = Vehicle::class;
 	public $successStatus = 200;
 
 	//VEHICLE SAVE

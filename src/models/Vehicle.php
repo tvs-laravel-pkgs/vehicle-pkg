@@ -4,8 +4,6 @@ namespace Abs\VehiclePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
-use App\Company;
-use App\Config;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -29,6 +27,12 @@ class Vehicle extends BaseModel {
 		"ewp_expiry_date",
 	];
 
+	protected $casts = [
+		"is_sold" => 'boolean',
+	];
+
+	// Getter & Setters --------------------------------------------------------------
+
 	public function getDateOfJoinAttribute($value) {
 		return empty($value) ? '' : date('d-m-Y', strtotime($value));
 	}
@@ -46,6 +50,13 @@ class Vehicle extends BaseModel {
 	}
 
 	// Relationships --------------------------------------------------------------
+
+	public static function relationships($action = '') {
+		$relationships = [
+			'model',
+		];
+		return $relationships;
+	}
 
 	public function vehicleOwners() {
 		return $this->hasMany('App\VehicleOwner', 'vehicle_id', 'id');
@@ -76,48 +87,16 @@ class Vehicle extends BaseModel {
 	public function scopeFilterSearch($query, $term) {
 		if (strlen($term)) {
 			$query->where(function ($query) use ($term) {
-				$query->orWhere('code', 'LIKE', '%' . $term . '%');
-				$query->orWhere('name', 'LIKE', '%' . $term . '%');
+				$query->orWhere('chassis_number', 'LIKE', '%' . $term . '%');
+				$query->orWhere('registration_number', 'LIKE', '%' . $term . '%');
+				$query->orWhere('engine_number', 'LIKE', '%' . $term . '%');
 			});
+			$query->company();
+			// dd($query->toSql(), $query->get(), $term);
 		}
 	}
 
 	// Static Operations --------------------------------------------------------------
-
-	public static function createFromObject($record_data) {
-
-		$errors = [];
-		$company = Company::where('code', $record_data->company)->first();
-		if (!$company) {
-			dump('Invalid Company : ' . $record_data->company);
-			return;
-		}
-
-		$admin = $company->admin();
-		if (!$admin) {
-			dump('Default Admin user not found');
-			return;
-		}
-
-		$type = Config::where('name', $record_data->type)->where('config_type_id', 89)->first();
-		if (!$type) {
-			$errors[] = 'Invalid Tax Type : ' . $record_data->type;
-		}
-
-		if (count($errors) > 0) {
-			dump($errors);
-			return;
-		}
-
-		$record = self::firstOrNew([
-			'company_id' => $company->id,
-			'name' => $record_data->tax_name,
-		]);
-		$record->type_id = $type->id;
-		$record->created_by_id = $admin->id;
-		$record->save();
-		return $record;
-	}
 
 	public static function getList($params = [], $add_default = true, $default_text = 'Select Vehicle') {
 		$list = Collect(Self::select([
