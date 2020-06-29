@@ -15,6 +15,23 @@ class VehicleMake extends BaseModel {
 		["id", "company_id", "code", "name"]
 	;
 
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+	];
+
 	// Getter & Setters --------------------------------------------------------------
 
 	// Relations --------------------------------------------------------------

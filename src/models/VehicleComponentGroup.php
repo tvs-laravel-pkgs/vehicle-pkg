@@ -14,6 +14,23 @@ class VehicleComponentGroup extends BaseModel {
 
 	public static $AUTO_GENERATE_CODE = true;
 
+	protected static $excelColumnRules = [
+		'Code' => [
+			'table_column_name' => 'code',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Name' => [
+			'table_column_name' => 'name',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+	];
+
 	// Static Operations --------------------------------------------------------------
 
 	public static function validateFormInput($data, $user) {
