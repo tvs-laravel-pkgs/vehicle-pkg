@@ -61,7 +61,7 @@ class VehicleModel extends Model {
 	}
 
 	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Vehicle Model') {
-		$list = Self::company()->select([
+		$list = Self::select([
 			'id',
 			'model_number as name',
 		])
@@ -70,8 +70,8 @@ class VehicleModel extends Model {
 					$q->where('vehicle_make_id', $params['vehicle_make_id']);
 				}
 			})
+			->where('company_id', Auth::user()->company_id)
 			->orderBy('name')
-
 			->get();
 		if ($add_default) {
 			$list->prepend(['id' => '', 'name' => $default_text]);
