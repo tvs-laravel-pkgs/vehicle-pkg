@@ -4,8 +4,11 @@ namespace Abs\VehiclePkg;
 
 use Abs\HelperPkg\Traits\SeederTrait;
 use App\BaseModel;
+use App\Company;
+use App\VehicleModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PHPExcel_Style_NumberFormat;
 
 class Vehicle extends BaseModel {
 	use SeederTrait;
@@ -31,6 +34,153 @@ class Vehicle extends BaseModel {
 		"is_sold" => 'boolean',
 	];
 
+	protected static $excelColumnRules = [
+		'Engine Number' => [
+			'table_column_name' => 'engine_number',
+			'rules' => [
+
+			],
+		],
+		'Chassis Number' => [
+			'table_column_name' => 'chassis_number',
+			'rules' => [
+				'required' => [
+				],
+			],
+		],
+		'Model Number' => [
+			'table_column_name' => 'model_id',
+			'rules' => [
+				'fk' => [
+					'class' => 'App\VehicleModel',
+					'foreign_table_column' => 'model_number',
+				],
+			],
+		],
+		'Is Registered' => [
+			'table_column_name' => 'is_registered',
+			'rules' => [
+				'required' => [
+				],
+				'unsigned_integer' => [
+					'size' => '1',
+				],
+			],
+		],
+		'Registration Number' => [
+			'table_column_name' => 'registration_number',
+			'rules' => [],
+		],
+		'VIN Number' => [
+			'table_column_name' => 'vin_number',
+			'rules' => [],
+		],
+		'Sold Date' => [
+			'table_column_name' => 'sold_date',
+			'rules' => [],
+		],
+	];
+
+	public static function saveFromObject($record_data) {
+		$record = [
+			'Company Code' => $record_data->company_code,
+			'Engine Number' => $record_data->engine_number,
+			'Chassis Number' => $record_data->chassis_number,
+			'Model Number' => $record_data->model_number,
+			'Is Registered' => $record_data->is_registered,
+			'Registration Number' => $record_data->registration_number,
+			'VIN Number' => $record_data->vin_number,
+			'Sold Date' => $record_data->sold_date,
+		];
+		return static::saveFromExcelArray($record);
+	}
+
+	public static function saveFromExcelArray($record_data) {
+		try {
+			$is_registered = 0;
+			$errors = [];
+			$company = Company::where('code', $record_data['Company Code'])->first();
+			if (!$company) {
+				return [
+					'success' => false,
+					'errors' => ['Invalid Company : ' . $record_data['Company Code']],
+				];
+			}
+
+			if (!isset($record_data['created_by_id'])) {
+				$admin = $company->admin();
+
+				if (!$admin) {
+					return [
+						'success' => false,
+						'errors' => ['Default Admin user not found'],
+					];
+				}
+				$created_by_id = $admin->id;
+			} else {
+				$created_by_id = $record_data['created_by_id'];
+			}
+
+			if (empty($record_data['Chassis Number'])) {
+				$errors[] = 'Chassis Number is empty';
+			}
+
+			if (!empty($record_data['Model Number'])) {
+				$model = VehicleModel::where([
+					'company_id' => $company->id,
+					'model_number' => $record_data['Model Number'],
+				])->first();
+				if (!$model) {
+					$errors[] = 'Invalid Model Number : ' . $record_data['Model Number'];
+				}
+			}
+
+			if (!empty($record_data['Sold Date'])) {
+				$sold_date = PHPExcel_Style_NumberFormat::toFormattedString($record_data['Sold Date'], 'yyyy-mm-dd');
+			} else {
+				$sold_date = null;
+			}
+
+			if (!empty($record_data['Registration Number'])) {
+				$is_registered = 1;
+			}
+
+			if (count($errors) > 0) {
+				return [
+					'success' => false,
+					'errors' => $errors,
+				];
+			}
+
+			$record = Self::firstOrNew([
+				'company_id' => $company->id,
+				'chassis_number' => $record_data['Chassis Number'],
+			]);
+
+			// dd($record_data)
+			$result = Self::validateAndFillExcelColumns($record_data, Static::$excelColumnRules, $record);
+			if (!$result['success']) {
+				return $result;
+			}
+			// $record->engine_number = $record_data['Engine Number'];
+			$record->is_registered = $is_registered;
+			$record->sold_date = $sold_date;
+			$record->company_id = $company->id;
+			$record->created_by_id = $created_by_id;
+			$record->status_id = 8140;
+			$record->save();
+			return [
+				'success' => true,
+			];
+		} catch (\Exception $e) {
+			return [
+				'success' => false,
+				'errors' => [
+					$e->getMessage(),
+				],
+			];
+		}
+	}
 	// Getter & Setters --------------------------------------------------------------
 
 	public function getDateOfJoinAttribute($value) {
