@@ -6,6 +6,11 @@
 
 
 <script type='text/javascript'>
+
+	//Vehicle Segments
+    var vehicle_segment_list_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/list.html')}}";
+    var vehicle_segment_form_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/form.html')}}";
+
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Vehicle Make
