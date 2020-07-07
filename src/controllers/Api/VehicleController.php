@@ -146,6 +146,7 @@ class VehicleController extends Controller {
 
 			// INWARD PROCESS CHECK - VEHICLE DETAIL
 			$job_order = JobOrder::find($request->job_order_id);
+			$job_order->update(['status_id' => 8463]);
 			$job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
 
 			DB::commit();
