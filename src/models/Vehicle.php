@@ -165,6 +165,9 @@ class Vehicle extends BaseModel {
 			// $record->engine_number = $record_data['Engine Number'];
 			$record->is_registered = $is_registered;
 			$record->sold_date = $sold_date;
+			if($record->sold_date){
+				$record->is_sold = 1;
+			}
 			$record->company_id = $company->id;
 			$record->created_by_id = $created_by_id;
 			$record->status_id = 8140;
