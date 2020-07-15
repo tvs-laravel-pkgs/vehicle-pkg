@@ -86,6 +86,23 @@
                                         <div class="col-md-3">
                                             <div class="input-text form-group">
                                                 <label>
+                                                    Vehicle Service Schedule
+                                                    <sup class="mandatory">*</sup>
+                                                </label>
+                                                <md-select ng-model="$ctrl.vehicle_segment.vehicle_service_schedule_id" md-on-close="clearSearchTerm()" data-md-container-class="selectdemoSelectHeader" placeholder="Vehicle Service Schedule">
+                                                    <md-select-header class="demo-select-header">
+                                                        <input ng-model="searchTerm" type="search" placeholder="Search Vehicle Service Schedule" class="demo-header-searchbox md-text" ng-keydown="$event.stopPropagation()">
+                                                    </md-select-header>
+                                                    <md-optgroup>
+                                                        <md-option ng-value="make_list.id" ng-repeat="make_list in $ctrl.vehicle_service_schedule_list | filter:searchTerm">{{make_list.name}}</md-option>
+                                                    </md-optgroup>
+                                                </md-select>
+                                                <input type="hidden" class="form-control required" name="vehicle_service_schedule_id" value="{{$ctrl.vehicle_segment.vehicle_service_schedule_id}}">
+                                            </div><!-- Field -->
+                                        </div><!-- Column -->
+                                        <div class="col-md-3">
+                                            <div class="input-text form-group">
+                                                <label>
                                                     Active Status
                                                     <sup class="mandatory">*</sup>
                                                 </label>

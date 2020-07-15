@@ -5,6 +5,7 @@ namespace Abs\VehiclePkg;
 use Abs\VehiclePkg\VehicleMake;
 use Abs\VehiclePkg\VehicleSegment;
 use App\Http\Controllers\Controller;
+use App\VehicleServiceSchedule;
 use Auth;
 use Carbon\Carbon;
 use DB;
@@ -39,10 +40,11 @@ class VehicleSegmentController extends Controller {
 				'vehicle_segments.code',
 				'vehicle_segments.name',
 				'vehicle_makes.code as make',
-
+				'vehicle_service_schedules.name as vehicle_service_schedule_name',
 				DB::raw('IF(vehicle_segments.deleted_at IS NULL, "Active","Inactive") as status'),
 			])
 			->leftJoin('vehicle_makes', 'vehicle_makes.id', 'vehicle_segments.vehicle_make_id')
+			->leftJoin('vehicle_service_schedules', 'vehicle_service_schedules.id', 'vehicle_segments.vehicle_service_schedule_id')
 			->where('vehicle_segments.company_id', Auth::user()->company_id)
 
 			->where(function ($query) use ($request) {
@@ -108,6 +110,7 @@ class VehicleSegmentController extends Controller {
 			$action = 'Edit';
 		}
 		$this->data['make_list'] = collect(VehicleMake::select('id', 'code')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'code' => 'Select Vehicle Make Code']);
+		$this->data['vehicle_service_schedule_list'] = collect(VehicleServiceSchedule::select('id', 'name')->where('company_id', Auth::user()->company_id)->get())->prepend(['id' => '', 'name' => 'Select Vehicle Service Schedule']);
 		$this->data['success'] = true;
 		$this->data['vehicle_segment'] = $vehicle_segment;
 		$this->data['action'] = $action;
@@ -126,6 +129,7 @@ class VehicleSegmentController extends Controller {
 				'name.unique' => 'Name is already taken',
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
+				'vehicle_service_schedule_id.required' => 'Vehicle Service Schedule is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -139,6 +143,8 @@ class VehicleSegmentController extends Controller {
 					'min:3',
 					'max:191',
 					'unique:vehicle_segments,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				], 'vehicle_service_schedule_id' => [
+					'required:true',
 				],
 			], $error_messages);
 			if ($validator->fails()) {

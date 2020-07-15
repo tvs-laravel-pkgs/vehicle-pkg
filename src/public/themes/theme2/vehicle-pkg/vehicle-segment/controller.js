@@ -59,6 +59,7 @@ app.component('vehicleSegmentList', {
                 { data: 'code', name: 'vehicle_segments.code' },
                 { data: 'name', name: 'vehicle_segments.name' },
                 { data: 'make', name: 'vehicle_makes.code' },
+                { data: 'vehicle_service_schedule_name', name: 'vehicle_service_schedules.name' },
                 { data: 'status', name: '' },
 
             ],
@@ -177,6 +178,7 @@ app.component('vehicleSegmentForm', {
         ).then(function(response) {
             self.vehicle_segment = response.data.vehicle_segment;
             self.make_list = response.data.make_list;
+            self.vehicle_service_schedule_list = response.data.vehicle_service_schedule_list;
             self.action = response.data.action;
             $rootScope.loading = false;
             if (self.action == 'Edit') {
@@ -204,6 +206,9 @@ app.component('vehicleSegmentForm', {
                     // required: true,
                     minlength: 3,
                     maxlength: 191,
+                },
+                'vehicle_service_schedule_id': {
+                    required: true,
                 },
             },
             messages: {

@@ -20,6 +20,7 @@ class VehicleSegment extends BaseModel {
 		"code",
 		"name",
 		"vehicle_make_id",
+		"vehicle_service_schedule_id",
 	];
 	public static $AUTO_GENERATE_CODE = true;
 

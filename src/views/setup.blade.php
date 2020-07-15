@@ -8,12 +8,29 @@
 <script type='text/javascript'>
 
 	//Vehicle Segments
-    var vehicle_segment_list_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/list.html')}}";
-    var vehicle_segment_form_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/form.html')}}";
-
 	app.config(['$routeProvider', function($routeProvider) {
 	    $routeProvider.
 	    //Vehicle Make
+	    when('/vehicle-pkg/vehicle-segment/list', {
+	        template: '<vehicle-segment-list></vehicle-segment-list>',
+	        title: 'Vehicle segments',
+	    }).
+	    when('/vehicle-pkg/vehicle-segment/add', {
+	        template: '<vehicle-segment-form></vehicle-segment-form>',
+	        title: 'Add Vehicle segment',
+	    }).
+	    when('/vehicle-pkg/vehicle-segment/edit/:id', {
+	        template: '<vehicle-segment-form></vehicle-segment-form>',
+	        title: 'Edit Vehicle segment',
+	    });
+	}]);
+
+    var vehicle_segment_list_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/list.html')}}";
+    var vehicle_segment_form_template_url = "{{asset($vehicle_pkg_prefix.'/public/themes/'.$theme.'/vehicle-pkg/vehicle-segment/form.html')}}";
+
+	//Vehicle Make
+	app.config(['$routeProvider', function($routeProvider) {
+	    $routeProvider.
 	    when('/vehicle-pkg/vehicle-make/list', {
 	        template: '<vehicle-make-list></vehicle-make-list>',
 	        title: 'Vehicle Makes',
