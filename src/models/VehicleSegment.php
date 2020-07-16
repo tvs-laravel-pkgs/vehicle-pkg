@@ -236,5 +236,7 @@ class VehicleSegment extends BaseModel {
 			];
 		}
 	}
-
+	public function vehicle_service_schedule() {
+		return $this->belongsTo('App\VehicleServiceSchedule', 'vehicle_service_schedule_id');
+	}
 }
