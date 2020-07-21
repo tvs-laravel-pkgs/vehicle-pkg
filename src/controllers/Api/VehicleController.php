@@ -37,18 +37,34 @@ class VehicleController extends Controller {
 						],
 					]);
 				} else {
-					$first_two_string = substr($request->registration_number, 0, 2);
-					$next_two_number = substr($request->registration_number, 2, 2);
-					$last_two_number = substr($request->registration_number, -2);
-					if (!preg_match('/^[A-Z]+$/', $first_two_string) && !preg_match('/^[0-9]+$/', $next_two_number) && !preg_match('/^[0-9]+$/', $last_two_number)) {
-						$error = "Please enter valid registration number!";
+
+					$registration_number = explode('-', $request->registration_number);
+
+					if (count($registration_number) > 2) {
+						$valid_reg_number = 1;
+						if (!preg_match('/^[A-Z]+$/', $registration_number[0]) || !preg_match('/^[0-9]+$/', $registration_number[1])) {
+							$valid_reg_number = 0;
+						}
+
+						if (count($registration_number) > 3) {
+							if (!preg_match('/^[A-Z]+$/', $registration_number[2]) || strlen($registration_number[3]) != 4 || !preg_match('/^[0-9]+$/', $registration_number[3])) {
+								$valid_reg_number = 0;
+							}
+						} else {
+							if (!preg_match('/^[0-9]+$/', $registration_number[2]) || strlen($registration_number[2]) != 4) {
+								$valid_reg_number = 0;
+							}
+						}
+					} else {
+						$valid_reg_number = 0;
 					}
-					if ($error) {
+
+					if ($valid_reg_number == 0) {
 						return response()->json([
 							'success' => false,
 							'error' => 'Validation Error',
 							'errors' => [
-								$error,
+								"Please enter valid registration number!",
 							],
 						]);
 					}
@@ -67,7 +83,7 @@ class VehicleController extends Controller {
 				],
 				'registration_number' => [
 					'required_if:is_registered,==,1',
-					'max:10',
+					'max:13',
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'is_sold' => [
@@ -96,13 +112,13 @@ class VehicleController extends Controller {
 					'string',
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
-				'vin_number' => [
-					'required',
-					'min:17',
-					'max:17',
-					'string',
-					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
+				// 'vin_number' => [
+				// 	'required',
+				// 	'min:17',
+				// 	'max:17',
+				// 	'string',
+				// 	'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				// ],
 			]);
 
 			if ($validator->fails()) {

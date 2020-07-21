@@ -157,10 +157,10 @@ class VehicleController extends Controller {
 				//'registration_number.unique' => 'Registration Number is already taken',
 				'registration_number.min' => 'Registration Number is Minimum 10 Charachers',
 				'registration_number.max' => 'Registration Number is Maximum 10 Charachers',
-				'vin_number.unique' => 'Vin Number is already taken',
-				'vin_number.min' => 'Vin Number is Minimum 10 Charachers',
-				'vin_number.max' => 'Vin Number is Maximum 32 Charachers',
-				'vin_number.required' => 'Vin Number is Required',
+				// 'vin_number.unique' => 'Vin Number is already taken',
+				// 'vin_number.min' => 'Vin Number is Minimum 10 Charachers',
+				// 'vin_number.max' => 'Vin Number is Maximum 32 Charachers',
+				// 'vin_number.required' => 'Vin Number is Required',
 
 				'sold_date.required' => 'Name is Required',
 
@@ -175,21 +175,21 @@ class VehicleController extends Controller {
 				'chassis_number' => [
 					'required:true',
 					'min:10',
-					'max:64',
+					'max:17',
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'registration_number' => [
 					'nullable',
 					'min:10',
-					'max:10', /*
+					'max:13', /*
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,*/
 				],
-				'vin_number' => [
-					'nullable',
-					'min:10',
-					'max:32',
-					'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
-				],
+				// 'vin_number' => [
+				// 	'nullable',
+				// 	'min:10',
+				// 	'max:32',
+				// 	'unique:vehicles,vin_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+				// ],
 			], $error_messages);
 			if ($validator->fails()) {
 				return response()->json(['success' => false, 'errors' => $validator->errors()->all()]);
