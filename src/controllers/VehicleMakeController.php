@@ -55,11 +55,11 @@ class VehicleMakeController extends Controller {
 				$img_delete = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-default.svg');
 				$img_delete_active = asset('public/themes/' . $this->data['theme'] . '/img/content/table/delete-active.svg');
 				$output = '';
-				if (Entrust::can('edit-vehicle_make')) {
-					$output .= '<a href="#!/vehicle-pkg/vehicle_make/edit/' . $vehicle_make->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+				if (Entrust::can('edit-vehicle-make')) {
+					$output .= '<a href="#!/vehicle-pkg/vehicle-make/edit/' . $vehicle_make->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
-				if (Entrust::can('delete-vehicle_make')) {
-					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle_make-delete-modal" onclick="angular.element(this).scope().deleteVehicleMake(' . $vehicle_make->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
+				if (Entrust::can('delete-vehicle-make')) {
+					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle-make-delete-modal" onclick="angular.element(this).scope().deleteVehicleMake(' . $vehicle_make->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				return $output;
 			})
@@ -97,7 +97,7 @@ class VehicleMakeController extends Controller {
 			$validator = Validator::make($request->all(), [
 				'code' => [
 					'required:true',
-					'min:3',
+					'min:2',
 					'max:32',
 					'unique:vehicle_makes,code,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],

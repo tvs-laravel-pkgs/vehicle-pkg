@@ -56,9 +56,8 @@ app.component('vehicleMakeList', {
 
             columns: [
                 { data: 'action', class: 'action', name: 'action', searchable: false },
-                { data: 'short_name', name: 'vehicle_makes.short_name' },
+                { data: 'code', name: 'vehicle_makes.code' },
                 { data: 'name', name: 'vehicle_makes.name' },
-                { data: 'description', name: 'vehicle_makes.description' },
                 { data: 'status', name: '' },
 
             ],
@@ -187,9 +186,9 @@ app.component('vehicleMakeForm', {
         var v = jQuery(form_id).validate({
             ignore: '',
             rules: {
-                'short_name': {
+                'code': {
                     required: true,
-                    minlength: 3,
+                    minlength: 2,
                     maxlength: 32,
                 },
                 'name': {
@@ -197,24 +196,24 @@ app.component('vehicleMakeForm', {
                     minlength: 3,
                     maxlength: 128,
                 },
-                'description': {
-                    minlength: 3,
-                    maxlength: 255,
-                }
+                // 'description': {
+                //     minlength: 3,
+                //     maxlength: 255,
+                // }
             },
             messages: {
                 'short_name': {
-                    minlength: 'Minimum 3 Characters',
+                    minlength: 'Minimum 2 Characters',
                     maxlength: 'Maximum 32 Characters',
                 },
                 'name': {
                     minlength: 'Minimum 3 Characters',
                     maxlength: 'Maximum 128 Characters',
                 },
-                'description': {
-                    minlength: 'Minimum 3 Characters',
-                    maxlength: 'Maximum 255 Characters',
-                }
+                // 'description': {
+                //     minlength: 'Minimum 3 Characters',
+                //     maxlength: 'Maximum 255 Characters',
+                // }
             },
             invalidHandler: function(event, validator) {
                 custom_noty('error', 'You have errors, Please check all tabs');
