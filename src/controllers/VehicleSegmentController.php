@@ -130,6 +130,7 @@ class VehicleSegmentController extends Controller {
 				'name.min' => 'Name is Minimum 3 Charachers',
 				'name.max' => 'Name is Maximum 191 Charachers',
 				'vehicle_service_schedule_id.required' => 'Vehicle Service Schedule is Required',
+				'vehicle_make_id.required' => 'Vehicle Make is Required',
 			];
 			$validator = Validator::make($request->all(), [
 				'code' => [
@@ -144,6 +145,8 @@ class VehicleSegmentController extends Controller {
 					'max:191',
 					'unique:vehicle_segments,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				], 'vehicle_service_schedule_id' => [
+					'required:true',
+				], 'vehicle_make_id' => [
 					'required:true',
 				],
 			], $error_messages);

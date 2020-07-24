@@ -210,6 +210,9 @@ app.component('vehicleSegmentForm', {
                 'vehicle_service_schedule_id': {
                     required: true,
                 },
+                'vehicle_make_id': {
+                    required: true,
+                },
             },
             messages: {
                 'code': {
