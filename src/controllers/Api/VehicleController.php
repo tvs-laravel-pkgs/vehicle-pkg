@@ -5,9 +5,11 @@ namespace Abs\VehiclePkg\Api;
 use Abs\BasicPkg\Traits\CrudTrait;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
+use App\TradePlateNumber;
 use App\User;
 use App\Vehicle;
 use Auth;
+use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -87,7 +89,7 @@ class VehicleController extends Controller {
 					'unique:vehicles,registration_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 				'is_sold' => [
-					'required',
+					'required_if:is_registered,==,0',
 					'integer',
 				],
 				'sold_date' => [
@@ -130,16 +132,32 @@ class VehicleController extends Controller {
 			}
 
 			DB::beginTransaction();
+
+			// INWARD PROCESS CHECK - VEHICLE DETAIL
+			$job_order = JobOrder::find($request->job_order_id);
+
 			//VEHICLE GATE ENTRY DETAILS
-			// UNREGISTRED VEHICLE DIFFERENT FLOW WAITING FOR REQUIREMENT
+			// UNREGISTRED VEHICLE
 			if ($request->is_registered != 1) {
-				return response()->json([
-					'success' => false,
-					'error' => 'Validation Error',
-					'errors' => [
-						'Unregistred Vehile Not allow!!',
-					],
-				]);
+				if ($request->plate_number) {
+					$trade_plate_number = TradePlateNumber::firstOrNew([
+						'company_id' => Auth::user()->company_id,
+						'outlet_id' => Auth::user()->employee->outlet_id,
+						'trade_plate_number' => $request->plate_number,
+					]);
+
+					if (!$trade_plate_number->exists) {
+						$trade_plate_number->created_by_id = Auth::user()->id;
+						$trade_plate_number->created_at = Carbon::now();
+					} else {
+						$trade_plate_number->updated_by_id = Auth::user()->id;
+						$trade_plate_number->updated_at = Carbon::now();
+					}
+
+					$trade_plate_number->save();
+
+					$job_order->trade_plate_number_id = $trade_plate_number->id;
+				}
 			}
 
 			//ONLY FOR REGISTRED VEHICLE
@@ -160,9 +178,9 @@ class VehicleController extends Controller {
 			}
 			$vehicle->save();
 
-			// INWARD PROCESS CHECK - VEHICLE DETAIL
-			$job_order = JobOrder::find($request->job_order_id);
-			$job_order->update(['status_id' => 8463]);
+			$job_order->status_id = 8463;
+			$job_order->save();
+
 			$job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
 
 			DB::commit();
