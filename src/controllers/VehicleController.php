@@ -97,13 +97,13 @@ class VehicleController extends Controller {
 
 				$output = '';
 				if (Entrust::can('edit-vehicle')) {
-					$output .= '<a href="#!/gigo-pkg/vehicle/edit/' . $vehicle->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
+					$output .= '<a href="#!/vehicle/edit/' . $vehicle->id . '" id = "" title="Edit"><img src="' . $img1 . '" alt="Edit" class="img-responsive" onmouseover=this.src="' . $img1 . '" onmouseout=this.src="' . $img1 . '"></a>';
 				}
 				if (Entrust::can('delete-vehicle')) {
 					$output .= '<a href="javascript:;" data-toggle="modal" data-target="#vehicle-delete-modal" onclick="angular.element(this).scope().deleteVehicle(' . $vehicle->id . ')" title="Delete"><img src="' . $img_delete . '" alt="Delete" class="img-responsive delete" onmouseover=this.src="' . $img_delete . '" onmouseout=this.src="' . $img_delete . '"></a>';
 				}
 				if (Entrust::can('view-vehicle')) {
-					$output .= '<a href="#!/gigo-pkg/vehicle/view/' . $vehicle->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
+					$output .= '<a href="#!/vehicle/view/' . $vehicle->id . '" id = "" title="View"><img src="' . $view_img . '" alt="View" class="img-responsive" onmouseover=this.src="' . $view_hover_img . '" onmouseout=this.src="' . $view_img . '"></a>';
 				}
 				return $output;
 			})
