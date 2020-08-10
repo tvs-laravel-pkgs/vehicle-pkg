@@ -191,6 +191,7 @@ class Vehicle extends BaseModel {
 		$registration_number = '';
 
 		if ($value) {
+			$value = str_replace('-', '', $value);
 			$reg_number = str_split($value);
 
 			$last_four_numbers = substr($value, -4);
@@ -201,7 +202,6 @@ class Vehicle extends BaseModel {
 				$registration_number .= $last_four_numbers;
 			} else {
 				$registration_number .= $reg_number[4];
-
 				if (is_numeric($reg_number[5])) {
 					$registration_number .= '-' . $last_four_numbers;
 				} else {
@@ -209,7 +209,6 @@ class Vehicle extends BaseModel {
 				}
 			}
 		}
-
 		return $this->attributes['registration_number'] = $registration_number;
 	}
 
