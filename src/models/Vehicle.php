@@ -23,7 +23,7 @@ class Vehicle extends BaseModel {
 		"model_id",
 		"is_registered",
 		"registration_number",
-		"vin_number",
+		// "vin_number",
 		"is_sold",
 		"sold_date",
 		"warranty_member_id",
@@ -71,10 +71,10 @@ class Vehicle extends BaseModel {
 			'table_column_name' => 'registration_number',
 			'rules' => [],
 		],
-		'VIN Number' => [
+		/*'VIN Number' => [
 			'table_column_name' => 'vin_number',
 			'rules' => [],
-		],
+		],*/
 		'Sold Date' => [
 			'table_column_name' => 'sold_date',
 			'rules' => [],
@@ -89,7 +89,7 @@ class Vehicle extends BaseModel {
 			'Model Number' => $record_data->model_number,
 			'Is Registered' => $record_data->is_registered,
 			'Registration Number' => $record_data->registration_number,
-			'VIN Number' => $record_data->vin_number,
+			// 'VIN Number' => $record_data->vin_number,
 			'Sold Date' => $record_data->sold_date,
 		];
 		return static::saveFromExcelArray($record);
