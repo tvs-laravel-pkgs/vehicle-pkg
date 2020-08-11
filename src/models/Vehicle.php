@@ -233,6 +233,7 @@ class Vehicle extends BaseModel {
 	public static function relationships($action = '') {
 		$relationships = [
 			'model',
+			'vehicleOwners.customer',
 		];
 		return $relationships;
 	}
