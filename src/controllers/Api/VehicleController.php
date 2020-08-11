@@ -30,12 +30,12 @@ class VehicleController extends Controller {
 			$error = '';
 			if ($request->registration_number) {
 				$registration_no_count = strlen($request->registration_number);
-				if ($registration_no_count < 8) {
+				if ($registration_no_count < 10) {
 					return response()->json([
 						'success' => false,
 						'error' => 'Validation Error',
 						'errors' => [
-							'The registration number must be at least 8 characters.',
+							'The registration number must be at least 10 characters.',
 						],
 					]);
 				} else {
@@ -72,6 +72,7 @@ class VehicleController extends Controller {
 					}
 				}
 			}
+			$request->registration_number = str_replace('-', '', $request->registration_number);
 
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
@@ -158,25 +159,26 @@ class VehicleController extends Controller {
 
 					$job_order->trade_plate_number_id = $trade_plate_number->id;
 				}
-			}
-
-			//ONLY FOR REGISTRED VEHICLE
-			if (!$request->id) {
-				//NEW VEHICLE
-				$vehicle = new Vehicle;
-				$vehicle->company_id = Auth::user()->company_id;
-				$vehicle->created_by_id = Auth::id();
 			} else {
-				$vehicle = Vehicle::find($request->id);
-				$vehicle->updated_by_id = Auth::id();
+				//ONLY FOR REGISTRED VEHICLE
+				if (!$request->id) {
+					//NEW VEHICLE
+					$vehicle = new Vehicle;
+					$vehicle->company_id = Auth::user()->company_id;
+					$vehicle->created_by_id = Auth::id();
+				} else {
+					$vehicle = Vehicle::find($request->id);
+					$vehicle->updated_by_id = Auth::id();
+				}
+				$vehicle->fill($request->all());
+				$vehicle->registration_number = $request->registration_number;
+				if ($vehicle->currentOwner) {
+					$vehicle->status_id = 8142; //COMPLETED
+				} else {
+					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+				}
+				$vehicle->save();
 			}
-			$vehicle->fill($request->all());
-			if ($vehicle->currentOwner) {
-				$vehicle->status_id = 8142; //COMPLETED
-			} else {
-				$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
-			}
-			$vehicle->save();
 
 			$job_order->status_id = 8463;
 			$job_order->save();
