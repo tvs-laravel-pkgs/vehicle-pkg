@@ -28,6 +28,7 @@ class Vehicle extends BaseModel {
 		"sold_date",
 		"warranty_member_id",
 		"ewp_expiry_date",
+		"bharat_stage_id",
 	];
 
 	protected $casts = [
@@ -234,6 +235,7 @@ class Vehicle extends BaseModel {
 		$relationships = [
 			'model',
 			'vehicleOwners.customer',
+			'bharat_stage',
 		];
 		return $relationships;
 	}
@@ -262,6 +264,9 @@ class Vehicle extends BaseModel {
 		return $this->belongsTo('App\Config', 'status_id');
 	}
 
+	public function bharat_stage() {
+		return $this->belongsTo('App\BharatStage', 'bharat_stage_id');
+	}
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
