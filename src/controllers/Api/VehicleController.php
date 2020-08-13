@@ -157,7 +157,7 @@ class VehicleController extends Controller {
 
 					$trade_plate_number->save();
 
-					$job_order->trade_plate_number_id = $trade_plate_number->id;
+					$job_order->gatein_trade_plate_number_id = $trade_plate_number->id;
 				}
 			} else {
 				//ONLY FOR REGISTRED VEHICLE
