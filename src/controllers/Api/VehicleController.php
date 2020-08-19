@@ -5,11 +5,9 @@ namespace Abs\VehiclePkg\Api;
 use Abs\BasicPkg\Traits\CrudTrait;
 use App\Http\Controllers\Controller;
 use App\JobOrder;
-use App\TradePlateNumber;
 use App\User;
 use App\Vehicle;
 use Auth;
-use Carbon\Carbon;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -141,44 +139,48 @@ class VehicleController extends Controller {
 			// UNREGISTRED VEHICLE
 			if ($request->is_registered != 1) {
 				if ($request->plate_number) {
-					$trade_plate_number = TradePlateNumber::firstOrNew([
-						'company_id' => Auth::user()->company_id,
-						'outlet_id' => Auth::user()->employee->outlet_id,
-						'trade_plate_number' => $request->plate_number,
-					]);
+					// $trade_plate_number = TradePlateNumber::firstOrNew([
+					// 	'company_id' => Auth::user()->company_id,
+					// 	'outlet_id' => Auth::user()->employee->outlet_id,
+					// 	'trade_plate_number' => $request->plate_number,
+					// ]);
 
-					if (!$trade_plate_number->exists) {
-						$trade_plate_number->created_by_id = Auth::user()->id;
-						$trade_plate_number->created_at = Carbon::now();
-					} else {
-						$trade_plate_number->updated_by_id = Auth::user()->id;
-						$trade_plate_number->updated_at = Carbon::now();
-					}
+					// if (!$trade_plate_number->exists) {
+					// 	$trade_plate_number->created_by_id = Auth::user()->id;
+					// 	$trade_plate_number->created_at = Carbon::now();
+					// } else {
+					// 	$trade_plate_number->updated_by_id = Auth::user()->id;
+					// 	$trade_plate_number->updated_at = Carbon::now();
+					// }
 
-					$trade_plate_number->save();
+					// $trade_plate_number->save();
 
-					$job_order->gatein_trade_plate_number_id = $trade_plate_number->id;
+					$job_order->gatein_trade_plate_number_id = $request->plate_number;
 				}
-			} else {
-				//ONLY FOR REGISTRED VEHICLE
-				if (!$request->id) {
-					//NEW VEHICLE
-					$vehicle = new Vehicle;
-					$vehicle->company_id = Auth::user()->company_id;
-					$vehicle->created_by_id = Auth::id();
-				} else {
-					$vehicle = Vehicle::find($request->id);
-					$vehicle->updated_by_id = Auth::id();
-				}
-				$vehicle->fill($request->all());
-				$vehicle->registration_number = $request->registration_number;
-				if ($vehicle->currentOwner) {
-					$vehicle->status_id = 8142; //COMPLETED
-				} else {
-					$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
-				}
-				$vehicle->save();
 			}
+
+			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
+			// else {
+			//ONLY FOR REGISTRED VEHICLE
+			if (!$request->id) {
+				//NEW VEHICLE
+				$vehicle = new Vehicle;
+				$vehicle->company_id = Auth::user()->company_id;
+				$vehicle->created_by_id = Auth::id();
+			} else {
+				$vehicle = Vehicle::find($request->id);
+				$vehicle->updated_by_id = Auth::id();
+			}
+			$vehicle->fill($request->all());
+			if ($vehicle->currentOwner) {
+				$vehicle->status_id = 8142; //COMPLETED
+			} else {
+				$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
+			}
+			$vehicle->save();
+
+			// }
 
 			$job_order->status_id = 8463;
 			$job_order->save();
