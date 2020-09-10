@@ -138,7 +138,7 @@ class VehicleController extends Controller {
 			//VEHICLE GATE ENTRY DETAILS
 			// UNREGISTRED VEHICLE
 			if ($request->is_registered != 1) {
-				if ($request->plate_number) {
+				if ($request->trade_plate_number) {
 					// $trade_plate_number = TradePlateNumber::firstOrNew([
 					// 	'company_id' => Auth::user()->company_id,
 					// 	'outlet_id' => Auth::user()->employee->outlet_id,
@@ -155,7 +155,7 @@ class VehicleController extends Controller {
 
 					// $trade_plate_number->save();
 
-					$job_order->gatein_trade_plate_number_id = $request->plate_number;
+					$job_order->gatein_trade_plate_number_id = $request->trade_plate_number;
 				}
 			}
 
