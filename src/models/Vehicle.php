@@ -245,8 +245,7 @@ class Vehicle extends BaseModel {
 	}
 
 	public function currentOwner() {
-		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('ownership_id', 'DESC');
-		// return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC');
+		return $this->hasOne('App\VehicleOwner', 'vehicle_id')->orderBy('from_date', 'DESC');
 	}
 
 	public function model() {
