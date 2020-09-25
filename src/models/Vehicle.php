@@ -273,6 +273,11 @@ class Vehicle extends BaseModel {
 	public function bharat_stage() {
 		return $this->belongsTo('App\BharatStage', 'bharat_stage_id');
 	}
+
+	public function kmReadingType() {
+		return $this->belongsTo('App\Config', 'km_reading_type_id');
+	}
+
 	// Query Scopes --------------------------------------------------------------
 
 	public function scopeFilterSearch($query, $term) {
