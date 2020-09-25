@@ -29,6 +29,12 @@ class Vehicle extends BaseModel {
 		"warranty_member_id",
 		"ewp_expiry_date",
 		"bharat_stage_id",
+		"driver_name",
+		"driver_mobile_number",
+		"service_contact_number",
+		"km_reading_type_id",
+		"km_reading",
+		"hr_reading",
 	];
 
 	protected $casts = [
