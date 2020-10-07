@@ -6,6 +6,7 @@ use Abs\HelperPkg\Traits\SeederTrait;
 use App\Company;
 use App\Config;
 use Auth;
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -64,7 +65,7 @@ class VehicleModel extends Model {
 	public static function getDropDownList($params = [], $add_default = true, $default_text = 'Select Vehicle Model') {
 		$list = Self::select([
 			'id',
-			'model_number as name',
+			DB::raw('CONCAT(model_name," / ",model_number) as name'),
 		])
 			->where(function ($q) use ($params) {
 				if (isset($params['vehicle_make_id'])) {
