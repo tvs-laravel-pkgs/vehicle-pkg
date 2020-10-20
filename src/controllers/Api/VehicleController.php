@@ -72,6 +72,8 @@ class VehicleController extends Controller {
 			}
 			$request->registration_number = str_replace('-', '', $request->registration_number);
 
+			$request['registration_number'] = $request->registration_number ? str_replace('-', '', $request->registration_number) : NULL;
+
 			$validator = Validator::make($request->all(), [
 				'job_order_id' => [
 					'required',
