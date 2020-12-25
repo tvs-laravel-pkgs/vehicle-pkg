@@ -110,7 +110,7 @@ class VehicleController extends Controller {
 				],
 				'chassis_number' => [
 					'required',
-					'min:10',
+					'min:8',
 					'max:64',
 					'string',
 					'unique:vehicles,chassis_number,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
@@ -177,6 +177,8 @@ class VehicleController extends Controller {
 			$vehicle->fill($request->all());
 			if ($vehicle->currentOwner) {
 				$vehicle->status_id = 8142; //COMPLETED
+				$job_order->customer_id = $vehicle->currentOwner->customer_id;
+				$job_order->inwardProcessChecks()->where('tab_id', 8701)->update(['is_form_filled' => 1]);
 			} else {
 				$vehicle->status_id = 8141; //CUSTOMER NOT MAPPED
 			}
