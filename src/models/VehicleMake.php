@@ -2,7 +2,7 @@
 
 namespace Abs\VehiclePkg;
 
-use Abs\BasicPkg\BaseModel;
+use Abs\BasicPkg\Models\BaseModel;
 use Abs\HelperPkg\Traits\SeederTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
