@@ -105,7 +105,7 @@ class VehicleModelController extends Controller {
 					'required:true',
 					'min:3',
 					'max:191',
-					'unique:vehicle_models,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
+					// 'unique:vehicle_models,name,' . $request->id . ',id,company_id,' . Auth::user()->company_id,
 				],
 			], $error_messages);
 			if ($validator->fails()) {
