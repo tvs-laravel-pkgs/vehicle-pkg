@@ -11,6 +11,7 @@ use Auth;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
+use Carbon\Carbon;
 
 class VehicleController extends Controller {
 	use CrudTrait;
@@ -170,9 +171,11 @@ class VehicleController extends Controller {
 				$vehicle = new Vehicle;
 				$vehicle->company_id = Auth::user()->company_id;
 				$vehicle->created_by_id = Auth::id();
+				$vehicle->created_at = Carbon::now();
 			} else {
 				$vehicle = Vehicle::find($request->id);
 				$vehicle->updated_by_id = Auth::id();
+				$vehicle->updated_at = Carbon::now();
 			}
 			$vehicle->fill($request->all());
 			if ($vehicle->currentOwner) {
