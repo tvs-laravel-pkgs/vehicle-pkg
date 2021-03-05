@@ -3,7 +3,10 @@
 namespace Abs\VehiclePkg\Api;
 
 use Abs\BasicPkg\Traits\CrudTrait;
+use Abs\AmcPkg\AmcPolicy;
+use Abs\GigoPkg\AmcMember;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\WpoSoapController;
 use App\JobOrder;
 use App\User;
 use App\Vehicle;
@@ -17,6 +20,13 @@ class VehicleController extends Controller {
 	use CrudTrait;
 	public $model = Vehicle::class;
 	public $successStatus = 200;
+
+	public function __construct(WpoSoapController $getSoap = null) {
+		$this->data['theme'] = config('custom.theme');
+		$this->getSoap = $getSoap;
+		$this->success_code = 200;
+		$this->permission_denied_code = 401;
+	}
 
 	//VEHICLE SAVE
 	public function saveVehicle(Request $request) {
@@ -193,6 +203,50 @@ class VehicleController extends Controller {
 			$job_order->save();
 
 			$job_order->inwardProcessChecks()->where('tab_id', 8700)->update(['is_form_filled' => 1]);
+
+			if(!$job_order->service_policy_id){
+				if ($vehicle->chassis_number) {
+					$soap_number = $vehicle->chassis_number;
+				} elseif($vehicle->registration_number) {
+					$soap_number = $vehicle->registration_number;
+				} else {
+					$soap_number = $vehicle->engine_number;
+				}
+	
+				$membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+
+				if ($membership_data && $membership_data['success'] == 'true') {
+					$amc_policy = AmcPolicy::firstOrNew(['company_id' => Auth::user()->company_id, 'name' => $membership_data['membership_name'], 'type' => $membership_data['membership_type']]);
+					if ($amc_policy->exists) {
+						$amc_policy->updated_by_id = Auth::user()->id;
+						$amc_policy->updated_at = Carbon::now();
+					} else {
+						$amc_policy->created_by_id = Auth::user()->id;
+						$amc_policy->created_at = Carbon::now();
+					}
+	
+					$amc_policy->save();
+
+					$amc_member = AmcMember::firstOrNew(['company_id' => Auth::user()->company_id, 'entity_type_id' => 11180, 'vehicle_id' => $vehicle->id, 'policy_id' => $amc_policy->id, 'number' => $membership_data['membership_number']]);
+	
+					if ($amc_member->exists) {
+						$amc_member->updated_by_id = Auth::user()->id;
+						$amc_member->updated_at = Carbon::now();
+					} else {
+						$amc_member->created_by_id = Auth::user()->id;
+						$amc_member->created_at = Carbon::now();
+						$amc_member->updated_by_id = NULL;
+						$amc_member->updated_at = NULL;
+					}
+	
+					$amc_member->start_date = date('Y-m-d', strtotime($membership_data['start_date']));
+					$amc_member->expiry_date = date('Y-m-d', strtotime($membership_data['end_date']));
+					$amc_member->save();
+										
+					$job_order->service_policy_id = $amc_member->id;
+					$job_order->save();	
+				}
+			}
 
 			DB::commit();
 
