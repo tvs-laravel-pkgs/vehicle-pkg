@@ -241,6 +241,8 @@ class Vehicle extends BaseModel {
 		$relationships = [
 			'model',
 			'vehicleOwners.customer',
+			'currentOwner',
+            'currentOwner.customer',
 			'bharat_stage',
 		];
 		return $relationships;
