@@ -213,10 +213,10 @@ class VehicleController extends Controller
             if (!$job_order->service_policy_id) {
                 if ($vehicle->chassis_number) {
                     $soap_number = $vehicle->chassis_number;
-                } elseif ($vehicle->registration_number) {
-                    $soap_number = $vehicle->registration_number;
-                } else {
+                } elseif ($vehicle->engine_number) {
                     $soap_number = $vehicle->engine_number;
+                } else {
+                    $soap_number = $vehicle->registration_number;
                 }
 
                 $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
