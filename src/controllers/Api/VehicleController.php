@@ -7,6 +7,7 @@ use Abs\BasicPkg\Traits\CrudTrait;
 use Abs\GigoPkg\AmcAggregateCoupon;
 use Abs\GigoPkg\AmcCustomer;
 use Abs\GigoPkg\AmcMember;
+use App\ApiLog;
 use App\Customer;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\WpoSoapController;
@@ -220,6 +221,20 @@ class VehicleController extends Controller
                 }
 
                 $membership_data = $this->getSoap->GetTVSONEVehicleDetails($soap_number);
+
+                //Save API Response
+                $api_log = new ApiLog;
+                $api_log->type_id = 11781;
+                $api_log->entity_number = $soap_number;
+                $api_log->entity_id = $vehicle->id;
+                $api_log->url = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                $api_log->src_data = 'https: //tvsapp.tvs.in/tvsone/tvsoneapi/WebService1.asmx?wsdl';
+                $api_log->response_data = json_encode(array($membership_data));
+                $api_log->user_id = Auth::user()->id;
+                $api_log->status_id = isset($membership_data) ? $membership_data['success'] == 'true' ? 11271 : 11272 : 11272;
+                $api_log->errors = null;
+                $api_log->created_by_id = Auth::user()->id;
+                $api_log->save();
 
                 if ($membership_data && $membership_data['success'] == 'true') {
                     // dump($membership_data);
