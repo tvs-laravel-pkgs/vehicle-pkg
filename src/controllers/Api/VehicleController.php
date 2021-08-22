@@ -205,6 +205,8 @@ class VehicleController extends Controller
             $vehicle->model_id = $request->model_id;
             if($request->sold_date){
                 $vehicle->sold_date = date('Y-m-d', strtotime($request->sold_date));
+            }else{
+                $vehicle->sold_date = null;
             }
             $vehicle->save();
 
