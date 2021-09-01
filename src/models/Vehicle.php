@@ -235,6 +235,10 @@ class Vehicle extends BaseModel {
 		return $this->attributes['sold_date'] = empty($date) ? NULL : date('Y-m-d', strtotime($date));
 	}
 
+	public function getHrReadingAttribute($value) {
+		return empty($value) ? '' : round($value);
+	}
+
 	// Relationships --------------------------------------------------------------
 
 	public static function relationships($action = '') {
