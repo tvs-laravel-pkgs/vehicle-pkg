@@ -239,6 +239,10 @@ class Vehicle extends BaseModel {
 		return empty($value) ? '' : round($value);
 	}
 
+	public function getKmReadingAttribute($value) {
+		return empty($value) ? '' : round($value);
+	}
+
 	// Relationships --------------------------------------------------------------
 
 	public static function relationships($action = '') {
